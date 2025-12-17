@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Admin Panel</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'">
+                <i class="fas fa-pills"></i>
+                <span>PharmaStore</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+                <a href="manage-medicines.html" class="nav-link">Medicines</a>
+                <a href="manage-orders.html" class="nav-link">Orders</a>
+                <a href="manage-users.html" class="nav-link">Users</a>
+                <a href="manage-categories.html" class="nav-link">Categories</a>
+                <a href="inventory.html" class="nav-link">Inventory</a>
+                <a href="analytics.html" class="nav-link active">Analytics</a>
+                <div class="nav-actions">
+                    <div class="admin-menu" id="adminMenu" style="display: none;">
+                        <div class="user-dropdown">
+                            <button class="admin-profile-btn" id="adminProfileBtn">
+                                <i class="fas fa-user-shield"></i>
+                                <span id="adminName"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-menu" id="adminDropdownMenu">
+                                <button class="dropdown-item" id="adminLogoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Analytics Section -->
+    <section class="admin-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-chart-bar"></i> Analytics & Reports
+            </h2>
+            
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>Sales Overview</h3>
+                    <div class="analytics-stat">
+                        <div class="stat-item-large">
+                            <span class="stat-label">Total Revenue</span>
+                            <span class="stat-value" id="totalRevenue">PKR 0</span>
+                        </div>
+                        <div class="stat-item-large">
+                            <span class="stat-label">Total Orders</span>
+                            <span class="stat-value" id="totalOrdersCount">0</span>
+                        </div>
+                        <div class="stat-item-large">
+                            <span class="stat-label">Average Order Value</span>
+                            <span class="stat-value" id="avgOrderValue">PKR 0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Top Selling Medicines</h3>
+                    <div class="top-medicines-list" id="topMedicinesList">
+                        <!-- Top medicines will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Order Status Distribution</h3>
+                    <div class="status-distribution" id="statusDistribution">
+                        <!-- Status distribution will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Category Performance</h3>
+                    <div class="category-performance" id="categoryPerformance">
+                        <!-- Category performance will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Recent Activity</h3>
+                    <div class="recent-activity" id="recentActivity">
+                        <!-- Recent activity will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Customer Insights</h3>
+                    <div class="customer-insights">
+                        <div class="insight-item">
+                            <span>Total Customers</span>
+                            <strong id="totalCustomers">0</strong>
+                        </div>
+                        <div class="insight-item">
+                            <span>Active Customers</span>
+                            <strong id="activeCustomers">0</strong>
+                        </div>
+                        <div class="insight-item">
+                            <span>New Customers (This Month)</span>
+                            <strong id="newCustomers">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 PharmaStore. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loader"></div>
+    </div>
+
+    <script src="../js/api-service.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Setup event listeners first
+            if (typeof setupEventListeners === 'function') {
+                setupEventListeners();
+            }
+            
+            // Check auth to show admin menu
+            if (typeof checkAuth === 'function') {
+                checkAuth();
+            }
+            
+            // Initialize app
+            if (typeof initializeApp === 'function') {
+                await initializeApp();
+            }
+            
+            // Load analytics from database
+            await loadAnalytics();
+        });
+        
+        async function loadAnalytics() {
+            try {
+                if (typeof apiService === 'undefined') {
+                    throw new Error('API service not available');
+                }
+                
+                // Load all data from database
+                const [ordersResponse, medicinesResponse, usersResponse] = await Promise.all([
+                    apiService.getOrders(),
+                    apiService.getMedicines(),
+                    apiService.getUsers()
+                ]);
+                
+                const orders = ordersResponse.orders || ordersResponse || [];
+                const medicines = medicinesResponse.medicines || medicinesResponse || [];
+                const users = usersResponse.users || usersResponse || [];
+                
+                // Load order items for each order
+                for (let order of orders) {
+                    try {
+                        const itemsResponse = await apiService.getOrderItems(order.id);
+                        order.items = itemsResponse.items || itemsResponse || [];
+                    } catch (error) {
+                        console.error(`Failed to load items for order ${order.id}:`, error);
+                        order.items = [];
+                    }
+                }
+                
+                // Sales Overview
+                const completedOrders = orders.filter(o => o.status === 'completed');
+                const totalRevenue = completedOrders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+                const totalOrders = orders.length;
+                const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+                
+                document.getElementById('totalRevenue').textContent = `PKR ${totalRevenue.toFixed(2)}`;
+                document.getElementById('totalOrdersCount').textContent = totalOrders;
+                document.getElementById('avgOrderValue').textContent = `PKR ${avgOrderValue.toFixed(2)}`;
+                
+                // Top Selling Medicines - use sales field from medicines table
+                const topMedicines = [...medicines]
+                    .sort((a, b) => (parseInt(b.sales) || 0) - (parseInt(a.sales) || 0))
+                    .slice(0, 5);
+                
+                document.getElementById('topMedicinesList').innerHTML = topMedicines.length > 0
+                    ? topMedicines.map(med => `
+                        <div class="top-medicine-item">
+                            <span>${med.name}</span>
+                            <strong>${med.sales || 0} units</strong>
+                        </div>
+                    `).join('')
+                    : '<p class="no-data">No sales data available</p>';
+                
+                // Order Status Distribution
+                const statusCounts = {
+                    pending: orders.filter(o => o.status === 'pending').length,
+                    processing: orders.filter(o => o.status === 'processing').length,
+                    completed: orders.filter(o => o.status === 'completed').length,
+                    cancelled: orders.filter(o => o.status === 'cancelled').length
+                };
+                
+                document.getElementById('statusDistribution').innerHTML = `
+                    <div class="status-item">
+                        <span>Pending</span>
+                        <strong>${statusCounts.pending}</strong>
+                    </div>
+                    <div class="status-item">
+                        <span>Processing</span>
+                        <strong>${statusCounts.processing}</strong>
+                    </div>
+                    <div class="status-item">
+                        <span>Completed</span>
+                        <strong>${statusCounts.completed}</strong>
+                    </div>
+                    <div class="status-item">
+                        <span>Cancelled</span>
+                        <strong>${statusCounts.cancelled}</strong>
+                    </div>
+                `;
+                
+                // Category Performance - use sales from medicines
+                const categorySales = {};
+                medicines.forEach(med => {
+                    const category = med.category_name || med.category || 'Uncategorized';
+                    if (!categorySales[category]) {
+                        categorySales[category] = 0;
+                    }
+                    categorySales[category] += parseInt(med.sales) || 0;
+                });
+                
+                document.getElementById('categoryPerformance').innerHTML = Object.keys(categorySales).length > 0
+                    ? Object.entries(categorySales)
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([cat, sales]) => `
+                            <div class="category-item">
+                                <span>${cat}</span>
+                                <strong>${sales} units</strong>
+                            </div>
+                        `).join('')
+                    : '<p class="no-data">No category data available</p>';
+                
+                // Recent Activity
+                const recentOrders = orders.slice(-5).reverse();
+                document.getElementById('recentActivity').innerHTML = recentOrders.length > 0
+                    ? recentOrders.map(order => `
+                        <div class="activity-item">
+                            <i class="fas fa-shopping-bag"></i>
+                            <div>
+                                <strong>Order #${order.id}</strong>
+                                <span>${new Date(order.created_at || order.createdAt || order.date).toLocaleString()}</span>
+                            </div>
+                            <span>PKR ${parseFloat(order.total || 0).toFixed(2)}</span>
+                        </div>
+                    `).join('')
+                    : '<p class="no-data">No recent activity</p>';
+                
+                // Customer Insights
+                const activeCustomers = new Set(orders.map(o => o.user_id || o.user_email)).size;
+                const currentMonth = new Date().getMonth();
+                const currentYear = new Date().getFullYear();
+                const newCustomers = users.filter(u => {
+                    const createdDate = new Date(u.created_at || u.createdAt);
+                    return createdDate.getMonth() === currentMonth && createdDate.getFullYear() === currentYear;
+                }).length;
+                
+                document.getElementById('totalCustomers').textContent = users.length;
+                document.getElementById('activeCustomers').textContent = activeCustomers;
+                document.getElementById('newCustomers').textContent = newCustomers;
+            } catch (error) {
+                console.error('Failed to load analytics:', error);
+                // Show error messages
+                document.getElementById('totalRevenue').textContent = 'Error';
+                document.getElementById('totalOrdersCount').textContent = 'Error';
+                document.getElementById('avgOrderValue').textContent = 'Error';
+                document.getElementById('topMedicinesList').innerHTML = '<p class="no-data">Failed to load data</p>';
+                document.getElementById('statusDistribution').innerHTML = '<p class="no-data">Failed to load data</p>';
+                document.getElementById('categoryPerformance').innerHTML = '<p class="no-data">Failed to load data</p>';
+                document.getElementById('recentActivity').innerHTML = '<p class="no-data">Failed to load data</p>';
+            }
+        }
+    </script>
+</body>
+</html>
+

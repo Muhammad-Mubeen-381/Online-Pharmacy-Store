@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - PharmaStore</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'">
+                <i class="fas fa-pills"></i>
+                <span>PharmaStore</span>
+            </div>
+                <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="medicines.html" class="nav-link">Medicines</a>
+                <a href="categories.html" class="nav-link">Categories</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <div class="nav-actions">
+                    <button class="btn-cart" id="cartBtn" title="Shopping Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <div class="user-dropdown">
+                            <button class="user-profile-btn" id="userProfileBtn">
+                                <i class="fas fa-user-circle"></i>
+                                <span id="userName"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-menu" id="userDropdownMenu">
+                                <a href="dashboard.html" class="dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" id="logoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Checkout Section -->
+    <section class="checkout-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-shopping-cart"></i> Checkout
+            </h2>
+            
+            <div class="checkout-container">
+                <!-- Order Summary -->
+                <div class="checkout-summary">
+                    <h3>Order Summary</h3>
+                    <div class="order-items" id="checkoutItems">
+                        <!-- Items will be loaded here -->
+                    </div>
+                    <div class="order-totals">
+                        <div class="total-row">
+                            <span>Subtotal:</span>
+                            <span>PKR <span id="subtotal">0</span></span>
+                        </div>
+                        <div class="total-row">
+                            <span>Delivery Charges:</span>
+                            <span>PKR <span id="deliveryCharges">200</span></span>
+                        </div>
+                        <div class="total-row total-final">
+                            <span>Total:</span>
+                            <span>PKR <span id="finalTotal">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checkout Form -->
+                <div class="checkout-form-container">
+                    <form id="checkoutForm" class="checkout-form">
+                        <h3>Delivery Information</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" id="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number *</label>
+                                <input type="text" id="phoneNumber" required placeholder="03XXXXXXXXX" inputmode="numeric" maxlength="11">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Street Address *</label>
+                            <input type="text" id="address" placeholder="House/Flat No., Street, Area" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City *</label>
+                                <select id="city" required>
+                                    <option value="">Select City</option>
+                                    <!-- <option value="karachi">Karachi</option>
+                                    <option value="lahore">Lahore</option>
+                                    <option value="islamabad">Islamabad</option>
+                                    <option value="rawalpindi">Rawalpindi</option>
+                                    <option value="faisalabad">Faisalabad</option>
+                                    <option value="multan">Multan</option>
+                                    <option value="peshawar">Peshawar</option>
+                                    <option value="quetta">Quetta</option>
+                                    <option value="hyderabad">Hyderabad</option>
+                                    <option value="sialkot">Sialkot</option> -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="province">Province *</label>
+                                <select id="province" required>
+                                    <option value="">Select Province</option>
+                                    <option value="sindh">Sindh</option>
+                                    <option value="punjab">Punjab</option>
+                                    <option value="khyber">Khyber Pakhtunkhwa</option>
+                                    <option value="balochistan">Balochistan</option>
+                                    <option value="gilgit">Gilgit-Baltistan</option>
+                                    <option value="ajk">Azad Jammu & Kashmir</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postalCode">Postal Code *</label>
+                                <input type="text" id="postalCode" placeholder="12345" maxlength="5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="landmark">Landmark (Optional)</label>
+                                <input type="text" id="landmark" placeholder="Near main market, etc.">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deliveryInstructions">Delivery Instructions (Optional)</label>
+                            <textarea id="deliveryInstructions" rows="3" placeholder="Any special instructions for delivery..."></textarea>
+                        </div>
+
+                        <h3 class="payment-title">Payment Method</h3>
+                        <div class="payment-methods">
+                            <label class="payment-option">
+                                <input type="radio" name="paymentMethod" value="cod" checked>
+                                <div class="payment-option-content">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>Cash on Delivery</span>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="paymentMethod" value="card">
+                                <div class="payment-option-content">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Credit/Debit Card</span>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="paymentMethod" value="easypaisa">
+                                <div class="payment-option-content">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <span>EasyPaisa</span>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="paymentMethod" value="jazzcash">
+                                <div class="payment-option-content">
+                                    <i class="fas fa-wallet"></i>
+                                    <span>JazzCash</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary btn-place-order">
+                            <i class="fas fa-check"></i> Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 PharmaStore. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Order Success Modal -->
+    <div class="modal" id="orderSuccessModal">
+        <div class="modal-content success-modal">
+            <span class="close" id="closeSuccess">&times;</span>
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Order Placed Successfully!</h2>
+            <p>Your order has been confirmed. You will receive a confirmation email shortly.</p>
+            <p><strong>Order ID:</strong> <span id="orderId"></span></p>
+            <button class="btn-primary" id="closeSuccessBtn" onclick="window.location.href='index.html'">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loader"></div>
+    </div>
+
+    <script src="../js/api-service.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+             const provinceCities = {
+            sindh: ["Karachi", "Hyderabad"],
+            punjab: ["Lahore", "Faisalabad", "Multan", "Sialkot"],
+            khyber: ["Peshawar"],
+            balochistan: ["Quetta"],
+            gilgit: ["Gilgit"],
+            ajk: ["Muzaffarabad"]
+            };
+                const provinceSelect = document.getElementById('province');
+        const citySelect = document.getElementById('city');
+
+        provinceSelect.addEventListener('change', () => {
+        const province = provinceSelect.value;
+        citySelect.innerHTML = '<option value="">Select City</option>';
+        citySelect.disabled = true;
+
+        if (!province) return;
+
+        provinceCities[province].forEach(city => {
+            const opt = document.createElement('option');
+            opt.value = city;
+            opt.textContent = city;
+            citySelect.appendChild(opt);
+        });
+
+        citySelect.disabled = false;
+        });
+  
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Phone number input validation
+            const phoneInput = document.getElementById('phoneNumber');
+            if (phoneInput) {
+                phoneInput.addEventListener("input", function(){
+                    this.value = this.value.replace(/[^0-9]/g,"");
+                });
+            }
+            const postalCode = document.getElementById('postalCode');
+            if (postalCode) {
+                postalCode.addEventListener("input", function(){
+                    this.value = this.value.replace(/[^0-9]/g,"");
+                });
+            }
+            if (typeof initializeApp === 'function') {
+                initializeApp();
+            }
+            if (typeof setupEventListeners === 'function') {
+                setupEventListeners();
+            }
+            if (typeof checkAuth === 'function') {
+                checkAuth();
+            }
+            loadCheckoutData();
+            
+            // Load user data if logged in
+            const storedUser = localStorage.getItem('currentUser');
+            if (storedUser) {
+                try {
+                    const userData = JSON.parse(storedUser);
+                    const fullNameEl = document.getElementById('fullName');
+                    const emailEl = document.getElementById('email');
+                    const phoneEl = document.getElementById('phoneNumber');
+                    if (fullNameEl) fullNameEl.value = userData.name || '';
+                    if (emailEl) emailEl.value = userData.email || '';
+                    if (phoneEl) phoneEl.value = userData.phone || '';
+                } catch (error) {
+                    console.error('Failed to parse user data:', error);
+                }
+            }
+            
+            // Calculate totals
+            calculateCheckoutTotals();
+            
+            // Form submission
+            const checkoutForm = document.getElementById('checkoutForm');
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', handleCheckoutSubmit);
+            }
+        });
+        
+        let checkoutCart = [];
+        
+        async function loadCheckoutData() {
+            const cartItems = document.getElementById('checkoutItems');
+            
+            // Load cart from database
+            try {
+                if (typeof apiService !== 'undefined') {
+                    const token = localStorage.getItem('authToken');
+                    if (token) {
+                        const data = await apiService.getCart();
+                        if (data && data.items) {
+                            checkoutCart = data.items.map(item => ({
+                                id: item.medicine_id,
+                                name: item.name,
+                                description: item.description,
+                                price: parseFloat(item.price),
+                                image: item.image || '💊',
+                                quantity: item.quantity || 1
+                            }));
+                        } else if (data && Array.isArray(data)) {
+                            checkoutCart = data.map(item => ({
+                                id: item.medicine_id,
+                                name: item.name,
+                                description: item.description,
+                                price: parseFloat(item.price),
+                                image: item.image || '💊',
+                                quantity: item.quantity || 1
+                            }));
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load cart:', error);
+                checkoutCart = [];
+            }
+            
+            if (checkoutCart.length === 0) {
+                cartItems.innerHTML = '<p>Your cart is empty. <a href="medicines.html">Continue Shopping</a></p>';
+                calculateCheckoutTotals();
+                return;
+            }
+            
+            cartItems.innerHTML = checkoutCart.map(item => `
+                <div class="checkout-item">
+                    <div class="checkout-item-image">${item.image || '💊'}</div>
+                    <div class="checkout-item-info">
+                        <h4>${item.name}</h4>
+                        <p>Quantity: ${item.quantity || 1}</p>
+                    </div>
+                    <div class="checkout-item-price">PKR ${(item.price * (item.quantity || 1)).toFixed(2)}</div>
+                </div>
+            `).join('');
+            
+            calculateCheckoutTotals();
+        }
+        
+        function calculateCheckoutTotals() {
+            const subtotal = checkoutCart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+            const deliveryCharges = 200;
+            const finalTotal = subtotal + deliveryCharges;
+            
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('deliveryCharges').textContent = deliveryCharges.toFixed(2);
+            document.getElementById('finalTotal').textContent = finalTotal.toFixed(2);
+        }
+        
+        
+         async function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            
+            if (typeof currentUser === 'undefined' || !currentUser) {
+                if (typeof showNotification === 'function') {
+                    showNotification('Please login to place an order', 'error');
+                }
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            if (checkoutCart.length === 0) {
+                if (typeof showNotification === 'function') {
+                    showNotification('Your cart is empty', 'error');
+                }
+                return;
+            }
+            
+            // Build shipping address string for display
+            const addressStreet = document.getElementById('address').value;
+            const addressCity = document.getElementById('city').value;
+            const addressProvince = document.getElementById('province').value;
+            const addressPostalCode = document.getElementById('postalCode').value;
+            const addressLandmark = document.getElementById('landmark').value;
+            const deliveryInstructions = document.getElementById('deliveryInstructions').value;
+
+            const shippingAddress = [
+                addressStreet,
+                addressCity,
+                addressProvince,
+                addressPostalCode,
+                addressLandmark ? `Landmark: ${addressLandmark}` : '',
+                deliveryInstructions ? `Instructions: ${deliveryInstructions}` : ''
+            ].filter(Boolean).join(', ');
+            
+            // Prepare order data for API
+            const orderData = {
+                items: checkoutCart.map(item => ({
+                    medicineId: item.id,
+                    quantity: item.quantity || 1,
+                    price: item.price
+                })),
+                total: parseFloat(document.getElementById('finalTotal').textContent),
+                shippingAddress: shippingAddress,
+                paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+                addressStreet,
+                addressCity,
+                addressProvince,
+                addressPostalCode,
+                addressCountry: 'Pakistan',
+                addressPhone: document.getElementById('phoneNumber')
+                    ? document.getElementById('phoneNumber').value
+                    : (currentUser?.phone || '')
+            };
+            if (!addressProvince || !addressCity) {
+               showNotification("Please select Province and City", "error");
+                  return;
+}
+
+            
+            try {
+                if (typeof apiService !== 'undefined') {
+                    if (typeof showLoading === 'function') {
+                        showLoading();
+                    }
+                    
+                    // Create order via API
+                    const response = await apiService.createOrder(orderData);
+                    
+                    // Show success
+                    const orderId = response.order?.id || 'N/A';
+                    const orderIdEl = document.getElementById('orderId');
+                    if (orderIdEl) {
+                        orderIdEl.textContent = orderId;
+                    }
+
+                    const successModal = document.getElementById('orderSuccessModal');
+                    if (successModal && typeof openModal === 'function') {
+                        openModal(successModal);
+                    }
+
+                    if (typeof showNotification === 'function') {
+                        showNotification('Order placed successfully!', 'success');
+                    }
+
+                    /* ===========================
+                    🔥 REQUIRED FIX STARTS HERE
+                    =========================== */
+
+                    // Clear checkout cart
+                    checkoutCart.length = 0;
+                    await loadCheckoutData();
+
+                    // Clear navbar cart
+                    if (typeof cart !== 'undefined') {
+                        cart.length = 0;
+                    }
+
+                    // Clear localStorage cart (if used)
+                    localStorage.removeItem('cart');
+
+                    // Update navbar cart badge
+                    updateCartCount();
+
+                    /* ===========================
+                    🔥 REQUIRED FIX ENDS HERE
+                    =========================== */
+
+                } else {
+                    throw new Error('API service not available');
+                }
+            } catch (error) {
+                console.error('Order placement error:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification(error.message || 'Failed to place order. Please try again.', 'error');
+                }
+            } finally {
+                if (typeof hideLoading === 'function') {
+                    hideLoading();
+                }
+            }
+        }
+
+
+    </script>
+</body>
+</html>
+

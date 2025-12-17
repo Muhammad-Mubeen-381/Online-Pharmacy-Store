@@ -1,0 +1,18 @@
+-- Seed script to create default admin and user accounts
+-- 
+-- IMPORTANT: This file is for reference only.
+-- To create default accounts with proper password hashes, run:
+--
+--   npm run seed
+--   (or: node backend/database/seed-users.js)
+--
+-- Default credentials:
+-- Admin: admin@pharmastore.pk / admin123
+-- User: user@pharmastore.pk / user123
+--
+-- The seed script will:
+-- 1. Generate proper bcrypt password hashes
+-- 2. Create or update the default admin and user accounts
+-- 3. Ensure passwords work correctly for login
+--
+-- Alternative: You can also create accounts through the signup endpoints in the application.

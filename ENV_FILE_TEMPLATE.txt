@@ -1,0 +1,45 @@
+═══════════════════════════════════════════════════════════════
+  COMPLETE .env FILE - COPY THIS ENTIRE CONTENT
+═══════════════════════════════════════════════════════════════
+
+Create a file named: .env (with the dot!)
+Location: backend/.env
+
+Copy everything below this line:
+───────────────────────────────────────────────────────────────
+
+# Database Configuration
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=Mubeen@381
+DB_NAME=pharmacy_store
+DB_PORT=3306
+
+# JWT Secret (for authentication tokens)
+JWT_SECRET=pharmacy_store_jwt_secret_key_2025
+
+# Server Port
+PORT=3000
+
+# Email Configuration
+EMAIL_USER=pharmacare381@gmail.com
+EMAIL_PASSWORD=medpnudkxqukbgfq
+
+───────────────────────────────────────────────────────────────
+
+END OF FILE - Copy everything above this line
+
+═══════════════════════════════════════════════════════════════
+INSTRUCTIONS:
+═══════════════════════════════════════════════════════════════
+
+1. Go to: Pharmacy_Store/backend/ folder
+2. Create new file: .env (must start with a dot!)
+3. Open in Notepad
+4. Copy ALL the content between the dashed lines above
+5. Paste into .env file
+6. Save the file
+7. Restart your server (Ctrl+C then npm start)
+
+═══════════════════════════════════════════════════════════════
+

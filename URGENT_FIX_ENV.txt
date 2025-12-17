@@ -1,0 +1,33 @@
+═══════════════════════════════════════════════════════════════
+  URGENT: CREATE .env FILE NOW - COPY THIS EXACT CONTENT
+═══════════════════════════════════════════════════════════════
+
+ERROR: "using password: NO" means .env file is missing!
+
+SOLUTION: Create .env file in backend folder with this content:
+
+───────────────────────────────────────────────────────────────
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=Mubeen@381
+DB_NAME=pharmacy_store
+DB_PORT=3306
+
+JWT_SECRET=pharmacy_store_jwt_secret_key_2025
+
+PORT=3000
+
+EMAIL_USER=pharmacare381@gmail.com
+EMAIL_PASSWORD=medpnudkxqukbgfq
+───────────────────────────────────────────────────────────────
+
+STEPS:
+1. Go to: Pharmacy_Store/backend/ folder
+2. Create NEW file named: .env (with dot at start!)
+3. Copy ALL content between dashed lines above
+4. Paste into .env file
+5. Save file
+6. RESTART server (Ctrl+C then npm start)
+
+═══════════════════════════════════════════════════════════════
+

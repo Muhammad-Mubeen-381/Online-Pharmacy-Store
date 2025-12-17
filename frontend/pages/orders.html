@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - PharmaStore</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'">
+                <i class="fas fa-pills"></i>
+                <span>PharmaStore</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="medicines.html" class="nav-link">Medicines</a>
+                <a href="categories.html" class="nav-link">Categories</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="orders.html" class="nav-link active">Orders</a>
+                <a href="addresses.html" class="nav-link">Addresses</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <div class="nav-actions">
+                    <button class="btn-cart" id="cartBtn" title="Shopping Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <!-- Guest User Actions -->
+                    <div class="guest-actions" id="guestActions">
+                        <button class="btn-signup" id="userSignupBtn">Sign Up</button>
+                        <button class="btn-login" id="userLoginBtn">User Login</button>
+                        <button class="btn-admin" id="adminLoginBtn">Admin</button>
+                    </div>
+                    
+                    <!-- Authenticated User Actions -->
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <div class="user-dropdown">
+                            <button class="user-profile-btn" id="userProfileBtn">
+                                <i class="fas fa-user-circle"></i>
+                                <span id="userName"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-menu" id="userDropdownMenu">
+                                <a href="dashboard.html" class="dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                                <a href="orders.html" class="dropdown-item">
+                                    <i class="fas fa-shopping-bag"></i> My Orders
+                                </a>
+                                <a href="addresses.html" class="dropdown-item">
+                                    <i class="fas fa-map-marker-alt"></i> Addresses
+                                </a>
+                                <a href="profile.html" class="dropdown-item">
+                                    <i class="fas fa-user"></i> Profile
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" id="logoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Actions -->
+                    <div class="admin-menu" id="adminMenu" style="display: none;">
+                        <div class="user-dropdown">
+                            <button class="admin-profile-btn" id="adminProfileBtn">
+                                <i class="fas fa-user-shield"></i>
+                                <span id="adminName"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-menu" id="adminDropdownMenu">
+                                <a href="admin-dashboard.html" class="dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" id="adminLogoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Orders Section -->
+    <section class="orders-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-shopping-bag"></i> My Orders
+            </h2>
+            
+            <div class="orders-filter">
+                <button class="filter-btn active" data-status="all">All Orders</button>
+                <button class="filter-btn" data-status="pending">Pending</button>
+                <button class="filter-btn" data-status="processing">Processing</button>
+                <button class="filter-btn" data-status="completed">Completed</button>
+                <button class="filter-btn" data-status="cancelled">Cancelled</button>
+            </div>
+            
+            <div class="orders-list" id="ordersList">
+                <!-- Orders will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 PharmaStore. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- User Login Modal -->
+    <div class="modal" id="userLoginModal">
+        <div class="modal-content">
+            <span class="close" id="closeUserLogin">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-user-circle"></i>
+                <h2>User Login</h2>
+            </div>
+            <form id="userLoginForm">
+                <div class="form-group">
+                    <label for="userLoginEmail">Email</label>
+                    <input type="email" id="userLoginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userLoginPassword">Password</label>
+                    <input type="password" id="userLoginPassword" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <p class="form-switch">Don't have an account? <a href="#" id="switchToUserSignup">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Signup Modal -->
+    <div class="modal" id="userSignupModal">
+        <div class="modal-content">
+            <span class="close" id="closeUserSignup">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-user-plus"></i>
+                <h2>User Sign Up</h2>
+            </div>
+            <form id="userSignupForm">
+                <div class="form-group">
+                    <label for="userSignupName">Full Name</label>
+                    <input type="text" id="userSignupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="userSignupEmail">Email</label>
+                    <input type="email" id="userSignupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userSignupPassword">Password</label>
+                    <input type="password" id="userSignupPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="userSignupPhone">Phone Number</label>
+                    <input type="text" id="userSignupPhone" required placeholder="03XXXXXXXXX" inputmode="numeric" maxlength="11">
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+                <p class="form-switch">Already have an account? <a href="#" id="switchToUserLogin">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="adminLoginModal">
+        <div class="modal-content">
+            <span class="close" id="closeAdminLogin">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-user-shield"></i>
+                <h2>Admin Login</h2>
+            </div>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminLoginEmail">Email</label>
+                    <input type="email" id="adminLoginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminLoginPassword">Password</label>
+                    <input type="password" id="adminLoginPassword" required>
+                </div>
+                <button type="submit" class="btn-primary btn-admin-primary">
+                    <i class="fas fa-sign-in-alt"></i> Admin Login
+                </button>
+                <p class="form-switch">New admin? <a href="#" id="switchToAdminSignup">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderDetailsModal">
+        <div class="modal-content order-details-modal">
+            <span class="close" id="closeOrderDetails">&times;</span>
+            <h2>Order Details</h2>
+            <div id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content cart-modal">
+            <span class="close" id="closeCart">&times;</span>
+            <h2><i class="fas fa-shopping-cart"></i> Shopping Cart</h2>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be dynamically loaded here -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <strong>Total: PKR <span id="cartTotal">0</span></strong>
+                </div>
+                <button class="btn-primary btn-checkout" id="checkoutBtn">
+                    <i class="fas fa-credit-card"></i> Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-service.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Setup event listeners first
+            if (typeof setupEventListeners === 'function') {
+                setupEventListeners();
+            }
+            
+            // Check auth to show user menu
+            if (typeof checkAuth === 'function') {
+                checkAuth();
+            }
+            
+            // Initialize app
+            if (typeof initializeApp === 'function') {
+                await initializeApp();
+            }
+            
+            // Load orders from database
+            await loadOrders();
+            
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const status = btn.getAttribute('data-status');
+                    filterOrders(status);
+                });
+            });
+        });
+        
+        async function loadOrders() {
+            const ordersList = document.getElementById('ordersList');
+            ordersList.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading orders...</div>';
+            
+            try {
+                if (typeof apiService === 'undefined') {
+                    throw new Error('API service not available');
+                }
+                
+                const token = localStorage.getItem('authToken');
+                const userType = localStorage.getItem('userType');
+                
+                if (!token || userType !== 'user') {
+                    ordersList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Please Login</h3>
+                            <p>You need to login as a user to view your orders.</p>
+                            <a href="index.html" class="btn-primary">Go to Login</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Use getUserOrders which calls /orders/my-orders endpoint
+                const response = await apiService.getUserOrders();
+                const orders = response.orders || response || [];
+                
+                console.log('Loaded orders:', orders); // Debug log
+                
+                if (orders.length === 0) {
+                    ordersList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-shopping-bag"></i>
+                            <h3>No Orders Yet</h3>
+                            <p>You haven't placed any orders yet.</p>
+                            <a href="medicines.html" class="btn-primary">Start Shopping</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Load order items for each order (in parallel for better performance)
+                await Promise.all(orders.map(async (order) => {
+                    try {
+                        const itemsResponse = await apiService.getOrderItems(order.id);
+                        order.items = itemsResponse.items || itemsResponse || [];
+                        console.log(`Order ${order.id} items:`, order.items); // Debug log
+                    } catch (error) {
+                        console.error(`Failed to load items for order ${order.id}:`, error);
+                        order.items = [];
+                    }
+                }));
+                
+                // Store orders globally for filtering
+                window.allOrders = orders;
+                displayOrders(orders);
+            } catch (error) {
+                console.error('Failed to load orders:', error);
+                ordersList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading Orders</h3>
+                        <p>${error.message || 'Failed to load orders. Please try again later.'}</p>
+                        <button onclick="loadOrders()" class="btn-primary">Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayOrders(orders) {
+            const ordersList = document.getElementById('ordersList');
+            
+            ordersList.innerHTML = orders.map(order => `
+                <div class="order-card-large" onclick="showOrderDetails(${order.id})">
+                    <div class="order-header-large">
+                        <div>
+                            <span class="order-id-large">Order #${order.id}</span>
+                            <span class="order-date">${new Date(order.created_at || order.createdAt || order.date).toLocaleDateString()}</span>
+                        </div>
+                        <span class="order-status status-${order.status || 'pending'}">${(order.status || 'pending').toUpperCase()}</span>
+                    </div>
+                    <div class="order-items-preview">
+                        ${(order.items || []).slice(0, 3).map(item => `
+                            <div class="order-item-preview">
+                                <span>${item.medicine_name || item.name || 'Medicine'}</span>
+                                <span>Qty: ${item.quantity || 1}</span>
+                            </div>
+                        `).join('')}
+                        ${(order.items || []).length > 3 ? `<p>+${(order.items || []).length - 3} more items</p>` : ''}
+                    </div>
+                    <div class="order-footer-large">
+                        <div class="order-total-large">
+                            <strong>Total: PKR ${parseFloat(order.total || 0).toFixed(2)}</strong>
+                        </div>
+                        <button class="btn-view-order" onclick="event.stopPropagation(); showOrderDetails(${order.id})">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function filterOrders(status) {
+            const ordersList = document.getElementById('ordersList');
+            
+            // Use stored orders if available, otherwise reload
+            let ordersToFilter = window.allOrders || [];
+            
+            if (ordersToFilter.length === 0) {
+                loadOrders().then(() => {
+                    filterOrders(status);
+                });
+                return;
+            }
+            
+            // Filter orders by status
+            let filteredOrders = ordersToFilter;
+            if (status && status !== 'all') {
+                filteredOrders = ordersToFilter.filter(order => 
+                    (order.status || 'pending').toLowerCase() === status.toLowerCase()
+                );
+            }
+            
+            if (filteredOrders.length === 0) {
+                ordersList.innerHTML = '<div class="empty-state"><p>No orders found with this status.</p></div>';
+            } else {
+                displayOrders(filteredOrders);
+            }
+        }
+        
+        async function showOrderDetails(orderId) {
+            try {
+                let order = null;
+                if (typeof apiService !== 'undefined') {
+                    const response = await apiService.getOrderById(orderId);
+                    order = response.order || response;
+                    
+                    // Load order items
+                    const itemsResponse = await apiService.getOrderItems(orderId);
+                    order.items = itemsResponse.items || itemsResponse || [];
+                }
+                
+                if (!order) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Order not found', 'error');
+                    }
+                    return;
+                }
+            
+                const modal = document.getElementById('orderDetailsModal');
+                const content = document.getElementById('orderDetailsContent');
+                
+                content.innerHTML = `
+                    <div class="order-details-info">
+                        <div class="detail-row">
+                            <span><strong>Order ID:</strong></span>
+                            <span>#${order.id}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Date:</strong></span>
+                            <span>${new Date(order.created_at || order.createdAt || order.date).toLocaleString()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Status:</strong></span>
+                            <span class="order-status status-${order.status || 'pending'}">${(order.status || 'pending').toUpperCase()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Payment Method:</strong></span>
+                            <span>${order.payment_method || order.paymentMethod || 'Cash on Delivery'}</span>
+                        </div>
+                    </div>
+                    <h3>Items</h3>
+                    <div class="order-items-details">
+                        ${(order.items || []).map(item => `
+                            <div class="order-item-detail">
+                                <div class="item-info">
+                                    <h4>${item.medicine_name || item.name || 'Medicine'}</h4>
+                                    <p>Quantity: ${item.quantity || 1}</p>
+                                </div>
+                                <div class="item-price">PKR ${(parseFloat(item.price || 0) * (item.quantity || 1)).toFixed(2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="order-total-detail">
+                        <div class="total-row">
+                            <span>Subtotal:</span>
+                            <span>PKR ${parseFloat(order.total || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Delivery:</span>
+                            <span>PKR 200.00</span>
+                        </div>
+                        <div class="total-row total-final">
+                            <span>Total:</span>
+                            <span>PKR ${(parseFloat(order.total || 0) + 200).toFixed(2)}</span>
+                        </div>
+                    </div>
+                    ${order.shipping_address ? `
+                        <h3>Delivery Address</h3>
+                        <div class="delivery-address" style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <p style="margin: 0 0 10px 0; color: #333; line-height: 1.6;">${order.shipping_address}</p>
+                            ${order.matchingAddress ? `
+                                <div style="border-top: 1px solid #e0e0e0; padding-top: 10px; margin-top: 10px;">
+                                    <p style="margin: 0 0 10px 0; color: #666; font-size: 0.9em;">
+                                        <i class="fas fa-info-circle"></i> This address is saved in your address book.
+                                    </p>
+                                    <div style="display: flex; gap: 10px;">
+                                        <button onclick="editOrderAddress(${order.matchingAddress.id}, ${order.id})" 
+                                                style="padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em;">
+                                            <i class="fas fa-edit"></i> Edit Address
+                                        </button>
+                                        <button onclick="deleteOrderAddress(${order.matchingAddress.id}, ${order.id})" 
+                                                style="padding: 8px 15px; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em;">
+                                            <i class="fas fa-trash"></i> Delete Address
+                                        </button>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div style="border-top: 1px solid #e0e0e0; padding-top: 10px; margin-top: 10px;">
+                                    <p style="margin: 0 0 10px 0; color: #666; font-size: 0.9em;">
+                                        <i class="fas fa-info-circle"></i> This address may be saved in your address book. 
+                                        <a href="addresses.html" style="color: #4CAF50; text-decoration: none;">View all addresses</a>
+                                    </p>
+                                </div>
+                            `}
+                        </div>
+                    ` : ''}
+                `;
+                
+                if (typeof openModal === 'function') {
+                    openModal(modal);
+                } else {
+                    modal.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Failed to load order details:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Failed to load order details. Please try again.', 'error');
+                }
+            }
+        }
+        
+        // Store editing state globally
+        window.editingAddressId = null;
+        window.editingAddressOrderId = null;
+        
+        async function editOrderAddress(addressId, orderId) {
+            try {
+                if (typeof apiService === 'undefined') {
+                    throw new Error('API service not available');
+                }
+                
+                const response = await apiService.getAddressById(addressId);
+                const address = response.address || response;
+                
+                if (!address) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Address not found', 'error');
+                    }
+                    return;
+                }
+                
+                window.editingAddressId = addressId;
+                window.editingAddressOrderId = orderId;
+                
+                // Populate form
+                document.getElementById('editAddressStreet').value = address.street || '';
+                document.getElementById('editAddressCity').value = address.city || '';
+                document.getElementById('editAddressProvince').value = address.state || '';
+                document.getElementById('editAddressPostalCode').value = address.zip_code || '';
+                document.getElementById('editAddressPhone').value = address.phone || '';
+                document.getElementById('editAddressDefault').checked = address.is_default ? true : false;
+                
+                // Open modal
+                const modal = document.getElementById('editAddressModal');
+                if (typeof openModal === 'function') {
+                    openModal(modal);
+                } else {
+                    modal.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Failed to load address:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Failed to load address. Please try again.', 'error');
+                }
+            }
+        }
+        
+        async function deleteOrderAddress(addressId, orderId) {
+            if (!confirm('Are you sure you want to delete this address? This will remove it from your address book but will not affect the order.')) {
+                return;
+            }
+            
+            try {
+                if (typeof apiService === 'undefined') {
+                    throw new Error('API service not available');
+                }
+                
+                await apiService.deleteAddress(addressId);
+                
+                if (typeof showNotification === 'function') {
+                    showNotification('Address deleted successfully', 'success');
+                }
+                
+                // Reload order details to update the display
+                if (orderId) {
+                    await showOrderDetails(orderId);
+                }
+            } catch (error) {
+                console.error('Failed to delete address:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Failed to delete address. Please try again.', 'error');
+                }
+            }
+        }
+        
+        // Handle edit address form submission
+        document.addEventListener('DOMContentLoaded', () => {
+            const editAddressForm = document.getElementById('editAddressForm');
+            if (editAddressForm) {
+                editAddressForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    try {
+                        if (typeof apiService === 'undefined') {
+                            throw new Error('API service not available');
+                        }
+                        
+                        if (!window.editingAddressId) {
+                            throw new Error('No address selected for editing');
+                        }
+                        
+                        const addressData = {
+                            street: document.getElementById('editAddressStreet').value.trim(),
+                            city: document.getElementById('editAddressCity').value.trim(),
+                            state: document.getElementById('editAddressProvince').value.trim(),
+                            zipCode: document.getElementById('editAddressPostalCode').value.trim(),
+                            country: 'Pakistan',
+                            phone: document.getElementById('editAddressPhone').value.trim(),
+                            isDefault: document.getElementById('editAddressDefault').checked
+                        };
+                        
+                        // Validate required fields
+                        if (!addressData.street || !addressData.city || !addressData.state || !addressData.zipCode) {
+                            if (typeof showNotification === 'function') {
+                                showNotification('Please fill in all required address fields', 'error');
+                            }
+                            return;
+                        }
+                        
+                        await apiService.updateAddress(window.editingAddressId, addressData);
+                        
+                        if (typeof showNotification === 'function') {
+                            showNotification('Address updated successfully', 'success');
+                        }
+                        
+                        // Close modal
+                        const modal = document.getElementById('editAddressModal');
+                        if (typeof closeModal === 'function') {
+                            closeModal(modal);
+                        } else {
+                            modal.classList.remove('show');
+                        }
+                        
+                        // Reload order details to show updated address
+                        if (window.editingAddressOrderId) {
+                            await showOrderDetails(window.editingAddressOrderId);
+                        }
+                        
+                        // Reset
+                        window.editingAddressId = null;
+                        window.editingAddressOrderId = null;
+                    } catch (error) {
+                        console.error('Failed to update address:', error);
+                        if (typeof showNotification === 'function') {
+                            showNotification(error.message || 'Failed to update address. Please try again.', 'error');
+                        }
+                    }
+                });
+            }
+            
+            // Close modal handlers
+            const closeEditAddressModal = document.getElementById('closeEditAddressModal');
+            if (closeEditAddressModal) {
+                closeEditAddressModal.addEventListener('click', () => {
+                    const modal = document.getElementById('editAddressModal');
+                    if (typeof closeModal === 'function') {
+                        closeModal(modal);
+                    } else {
+                        modal.classList.remove('show');
+                    }
+                    window.editingAddressId = null;
+                    window.editingAddressOrderId = null;
+                });
+            }
+        });
+        
+        // Make functions globally available
+        window.editOrderAddress = editOrderAddress;
+        window.deleteOrderAddress = deleteOrderAddress;
+    </script>
+    
+    <!-- Edit Address Modal -->
+    <div class="modal" id="editAddressModal">
+        <div class="modal-content">
+            <span class="close" id="closeEditAddressModal">&times;</span>
+            <h2>Edit Address</h2>
+            <form id="editAddressForm">
+                <div class="form-group">
+                    <label for="editAddressStreet">Street Address *</label>
+                    <input type="text" id="editAddressStreet" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editAddressCity">City *</label>
+                        <input type="text" id="editAddressCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAddressProvince">Province *</label>
+                        <input type="text" id="editAddressProvince" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editAddressPostalCode">Postal Code *</label>
+                    <input type="text" id="editAddressPostalCode" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAddressPhone">Phone Number</label>
+                    <input type="text" id="editAddressPhone" placeholder="03XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="editAddressDefault">
+                        <span>Set as default address</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary">Update Address</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

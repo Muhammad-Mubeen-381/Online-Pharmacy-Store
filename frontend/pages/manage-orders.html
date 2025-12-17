@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders - Admin Panel</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'">
+                <i class="fas fa-pills"></i>
+                <span>PharmaStore</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+                <a href="manage-medicines.html" class="nav-link">Medicines</a>
+                <a href="manage-orders.html" class="nav-link active">Orders</a>
+                <a href="manage-users.html" class="nav-link">Users</a>
+                <a href="manage-categories.html" class="nav-link">Categories</a>
+                <a href="inventory.html" class="nav-link">Inventory</a>
+                <a href="analytics.html" class="nav-link">Analytics</a>
+                <div class="nav-actions">
+                    <div class="admin-menu" id="adminMenu" style="display: none;">
+                        <div class="user-dropdown">
+                            <button class="admin-profile-btn" id="adminProfileBtn">
+                                <i class="fas fa-user-shield"></i>
+                                <span id="adminName"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-menu" id="adminDropdownMenu">
+                                <button class="dropdown-item" id="adminLogoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Manage Orders Section -->
+    <section class="admin-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-shopping-bag"></i> Manage Orders
+            </h2>
+            
+            <div class="orders-filter">
+                <button class="filter-btn active" data-status="all">All Orders</button>
+                <button class="filter-btn" data-status="pending">Pending</button>
+                <button class="filter-btn" data-status="processing">Processing</button>
+                <button class="filter-btn" data-status="completed">Completed</button>
+                <button class="filter-btn" data-status="cancelled">Cancelled</button>
+            </div>
+            
+            <div class="orders-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total (PKR)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Orders will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 PharmaStore. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderDetailsModal">
+        <div class="modal-content order-details-modal">
+            <span class="close" id="closeOrderDetails">&times;</span>
+            <h2>Order Details</h2>
+            <div id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loader"></div>
+    </div>
+
+    <script src="../js/api-service.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        let adminOrdersCache = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Setup shared UI behavior
+            if (typeof setupEventListeners === 'function') {
+                setupEventListeners();
+            }
+            if (typeof checkAuth === 'function') {
+                checkAuth();
+            }
+            if (typeof initializeApp === 'function') {
+                await initializeApp();
+            }
+
+            await loadOrdersTable();
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const status = btn.getAttribute('data-status');
+                    filterOrdersTable(status);
+                });
+            });
+        });
+        
+        async function loadOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">Loading orders...</td></tr>';
+
+            try {
+                if (typeof apiService === 'undefined') {
+                    throw new Error('API service not available');
+                }
+
+                const response = await apiService.getOrders();
+                const orders = response.orders || response || [];
+                adminOrdersCache = orders;
+
+                if (orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center">No orders found.</td></tr>';
+                    return;
+                }
+
+                // Load order items for each order
+                await Promise.all(orders.map(async (order) => {
+                    try {
+                        const itemsResponse = await apiService.getOrderItems(order.id);
+                        order.items = itemsResponse.items || itemsResponse || [];
+                    } catch (error) {
+                        console.error(`Failed to load items for order ${order.id}:`, error);
+                        order.items = [];
+                    }
+                }));
+                
+                tbody.innerHTML = orders.map(order => {
+                    const itemsCount = order.items ? order.items.length : 0;
+                    return `
+                        <tr>
+                            <td>#${order.id}</td>
+                            <td>${order.user_name || 'Customer'}</td>
+                            <td>${new Date(order.created_at || order.createdAt || order.date).toLocaleDateString()}</td>
+                            <td>${itemsCount} items</td>
+                            <td>PKR ${parseFloat(order.total || 0).toFixed(2)}</td>
+                            <td>
+                                <select class="status-select" onchange="updateOrderStatus(${order.id}, this.value)">
+                                    <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                                    <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                    <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-view-small" onclick="viewOrderDetails(${order.id})">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Failed to load orders table:', error);
+                const tbody = document.getElementById('ordersTableBody');
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-error">Failed to load orders. Please refresh.</td></tr>';
+            }
+        }
+        
+        function filterOrdersTable(status) {
+            const tbody = document.getElementById('ordersTableBody');
+            let orders = adminOrdersCache || [];
+
+            if (status && status !== 'all') {
+                orders = orders.filter(o => (o.status || 'pending') === status);
+            }
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No orders found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => {
+                const itemsCount = order.items ? order.items.length : 0;
+                return `
+                    <tr>
+                        <td>#${order.id}</td>
+                        <td>${order.user_name || 'Customer'}</td>
+                        <td>${new Date(order.created_at || order.createdAt || order.date).toLocaleDateString()}</td>
+                        <td>${itemsCount} items</td>
+                        <td>PKR ${parseFloat(order.total || 0).toFixed(2)}</td>
+                        <td>
+                            <select class="status-select" onchange="updateOrderStatus(${order.id}, this.value)">
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                                <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-view-small" onclick="viewOrderDetails(${order.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        async function updateOrderStatus(orderId, newStatus) {
+            try {
+                if (typeof apiService === 'undefined') {
+                    throw new Error('API service not available');
+                }
+
+                await apiService.updateOrderStatus(orderId, newStatus);
+
+                if (typeof showNotification === 'function') {
+                    showNotification('Order status updated successfully', 'success');
+                }
+
+                // Refresh table to reflect status change
+                await loadOrdersTable();
+            } catch (error) {
+                console.error('Failed to update order status:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Failed to update order status. Please try again.', 'error');
+                }
+            }
+        }
+        
+        async function viewOrderDetails(orderId) {
+            try {
+                if (typeof apiService === 'undefined') {
+                    throw new Error('API service not available');
+                }
+
+                const response = await apiService.getOrderById(orderId);
+                const order = response.order || response;
+
+                if (!order) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Order not found', 'error');
+                    }
+                    return;
+                }
+                
+                // Load order items
+                try {
+                    const itemsResponse = await apiService.getOrderItems(orderId);
+                    order.items = itemsResponse.items || itemsResponse || [];
+                } catch (error) {
+                    console.error('Failed to load order items:', error);
+                    order.items = [];
+                }
+
+                const modal = document.getElementById('orderDetailsModal');
+                const content = document.getElementById('orderDetailsContent');
+                
+                content.innerHTML = `
+                    <div class="order-details-info">
+                        <div class="detail-row">
+                            <span><strong>Order ID:</strong></span>
+                            <span>#${order.id}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Customer:</strong></span>
+                            <span>${order.user_name || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Email:</strong></span>
+                            <span>${order.user_email || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Date:</strong></span>
+                            <span>${new Date(order.created_at || order.createdAt || order.date).toLocaleString()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Status:</strong></span>
+                            <span class="order-status status-${order.status || 'pending'}">${(order.status || 'pending').toUpperCase()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Payment Method:</strong></span>
+                            <span>${order.payment_method || order.paymentMethod || 'Cash on Delivery'}</span>
+                        </div>
+                    </div>
+                    <h3>Items</h3>
+                    <div class="order-items-details">
+                        ${(order.items || []).map(item => `
+                            <div class="order-item-detail">
+                                <div class="item-info">
+                                    <h4>${item.medicine_name || item.name || 'Medicine'}</h4>
+                                    <p>Quantity: ${item.quantity || 1}</p>
+                                </div>
+                                <div class="item-price">PKR ${(parseFloat(item.price || 0) * (item.quantity || 1)).toFixed(2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="order-total-detail">
+                        <div class="total-row total-final">
+                            <span>Total:</span>
+                            <span>PKR ${parseFloat(order.total || 0).toFixed(2)}</span>
+                        </div>
+                    </div>
+                    ${order.shipping_address ? `
+                        <h3>Delivery Address</h3>
+                        <div class="delivery-address">
+                            <p>${order.shipping_address}</p>
+                        </div>
+                    ` : ''}
+                `;
+                
+                if (typeof openModal === 'function') {
+                    openModal(modal);
+                } else {
+                    modal.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Failed to load order details:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Failed to load order details. Please try again.', 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+

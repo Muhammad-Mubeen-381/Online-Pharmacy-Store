@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicines - PharmaStore</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'">
+                <i class="fas fa-pills"></i>
+                <span>PharmaStore</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="medicines.html" class="nav-link active">Medicines</a>
+                <a href="categories.html" class="nav-link">Categories</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <div class="nav-actions">
+                    <button class="btn-cart" id="cartBtn" title="Shopping Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    
+                    <div class="guest-actions" id="guestActions">
+                        <button class="btn-login" id="userLoginBtn">User Login</button>
+                        <button class="btn-admin" id="adminLoginBtn">Admin</button>
+                    </div>
+                    
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <div class="user-dropdown">
+                            <button class="user-profile-btn" id="userProfileBtn">
+                                <i class="fas fa-user-circle"></i>
+                                <span id="userName"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-menu" id="userDropdownMenu">
+                                <a href="dashboard.html" class="dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                                <a href="orders.html" class="dropdown-item">
+                                    <i class="fas fa-shopping-bag"></i> My Orders
+                                </a>
+                                <a href="addresses.html" class="dropdown-item">
+                                    <i class="fas fa-map-marker-alt"></i> Addresses
+                                </a>
+                                <a href="profile.html" class="dropdown-item">
+                                    <i class="fas fa-user"></i> Profile
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" id="logoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-menu" id="adminMenu" style="display: none;">
+                        <div class="user-dropdown">
+                            <button class="admin-profile-btn" id="adminProfileBtn">
+                                <i class="fas fa-user-shield"></i>
+                                <span id="adminName"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-menu" id="adminDropdownMenu">
+                                <a href="admin-dashboard.html" class="dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" id="adminLogoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Medicines Section -->
+    <section class="medicines-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-capsules"></i> All Medicines
+            </h2>
+            <div class="search-filter">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search medicines..." class="search-box">
+                </div>
+                <select id="categoryFilter" class="filter-select">
+                    <option value="">All Categories</option>
+                </select>
+                <select id="sortSelect" class="sort-select">
+                    <option value="name">Sort by Name</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="sales">Sort by Sales</option>
+                    <option value="rating">Highest Rated</option>
+                </select>
+            </div>
+            <div class="medicines-grid" id="medicinesGrid">
+                <!-- Medicines will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-pills"></i> PharmaStore</h3>
+                    <p>Your trusted partner for all your healthcare needs.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="medicines.html">Medicines</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 PharmaStore. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- User Login Modal -->
+    <div class="modal" id="userLoginModal">
+        <div class="modal-content">
+            <span class="close" id="closeUserLogin">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-user-circle"></i>
+                <h2>User Login</h2>
+            </div>
+            <form id="userLoginForm">
+                <div class="form-group">
+                    <label for="userLoginEmail">Email</label>
+                    <input type="email" id="userLoginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userLoginPassword">Password</label>
+                    <input type="password" id="userLoginPassword" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <p class="form-switch">Don't have an account? <a href="#" id="switchToUserSignup">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Signup Modal -->
+    <div class="modal" id="userSignupModal">
+        <div class="modal-content">
+            <span class="close" id="closeUserSignup">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-user-plus"></i>
+                <h2>User Sign Up</h2>
+            </div>
+            <form id="userSignupForm">
+                <div class="form-group">
+                    <label for="userSignupName">Full Name</label>
+                    <input type="text" id="userSignupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="userSignupEmail">Email</label>
+                    <input type="email" id="userSignupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userSignupPassword">Password</label>
+                    <input type="password" id="userSignupPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="userSignupPhone">Phone Number</label>
+                    <input type="text" id="userSignupPhone" required placeholder="03XXXXXXXXX" inputmode="numeric" maxlength="11">
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+                <p class="form-switch">Already have an account? <a href="#" id="switchToUserLogin">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="adminLoginModal">
+        <div class="modal-content">
+            <span class="close" id="closeAdminLogin">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-user-shield"></i>
+                <h2>Admin Login</h2>
+            </div>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminLoginEmail">Email</label>
+                    <input type="email" id="adminLoginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminLoginPassword">Password</label>
+                    <input type="password" id="adminLoginPassword" required>
+                </div>
+                <button type="submit" class="btn-primary btn-admin-primary">
+                    <i class="fas fa-sign-in-alt"></i> Admin Login
+                </button>
+                <p class="form-switch">New admin? <a href="#" id="switchToAdminSignup">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Signup Modal -->
+    <div class="modal" id="adminSignupModal">
+        <div class="modal-content">
+            <span class="close" id="closeAdminSignup">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-user-shield"></i>
+                <h2>Admin Sign Up</h2>
+            </div>
+            <form id="adminSignupForm">
+                <div class="form-group">
+                    <label for="adminSignupName">Full Name</label>
+                    <input type="text" id="adminSignupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminSignupEmail">Email</label>
+                    <input type="email" id="adminSignupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminSignupPassword">Password</label>
+                    <input type="password" id="adminSignupPassword" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="adminSignupPhone">Phone Number</label>
+                    <input type="tel" id="adminSignupPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminSignupRole">Role</label>
+                    <select id="adminSignupRole" required>
+                        <option value="admin">Admin</option>
+                        <option value="super_admin">Super Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary btn-admin-primary">
+                    <i class="fas fa-user-shield"></i> Create Admin Account
+                </button>
+                <p class="form-switch">Already have an account? <a href="#" id="switchToAdminLogin">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content cart-modal">
+            <span class="close" id="closeCart">&times;</span>
+            <h2><i class="fas fa-shopping-cart"></i> Shopping Cart</h2>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be dynamically loaded here -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <strong>Total: PKR <span id="cartTotal">0</span></strong>
+                </div>
+                <button class="btn-primary btn-checkout" id="checkoutBtn">
+                    <i class="fas fa-credit-card"></i> Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loader"></div>
+    </div>
+
+    <script src="../js/api-service.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Phone number input validation
+            const phoneInput = document.getElementById('userSignupPhone');
+            if (phoneInput) {
+                phoneInput.addEventListener("input", function(){
+                    this.value = this.value.replace(/[^0-9]/g,"");
+                });
+            }
+            
+            // Setup event listeners first
+            if (typeof setupEventListeners === 'function') {
+                setupEventListeners();
+            }
+            
+            // Check auth
+            if (typeof checkAuth === 'function') {
+                checkAuth();
+            }
+            
+            // Initialize app and load medicines from database
+            if (typeof initializeApp === 'function') {
+                await initializeApp();
+            } else {
+                // If initializeApp doesn't exist, load medicines directly
+                if (typeof loadMedicines === 'function') {
+                    await loadMedicines();
+                }
+                if (typeof loadCategories === 'function') {
+                    await loadCategories();
+                }
+            }
+            
+            // Display medicines after loading
+            if (typeof displayMedicines === 'function') {
+                displayMedicines();
+            }
+            
+            // Handle search query from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search');
+            const categoryQuery = urlParams.get('category');
+            
+            if (searchQuery) {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = searchQuery;
+                }
+            }
+            
+            if (categoryQuery) {
+                const categoryFilter = document.getElementById('categoryFilter');
+                if (categoryFilter) {
+                    categoryFilter.value = categoryQuery;
+                }
+            }
+            
+            // Apply filters after data is loaded
+            if (typeof applyFilters === 'function') {
+                applyFilters();
+            }
+        });
+    </script>
+</body>
+</html>
+
