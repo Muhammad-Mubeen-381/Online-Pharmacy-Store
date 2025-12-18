@@ -9,11 +9,15 @@ Copy everything below this line:
 ───────────────────────────────────────────────────────────────
 
 # Database Configuration
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=Mubeen@381
-DB_NAME=pharmacy_store
-DB_PORT=3306
+MYSQL_DATABASE="railway"
+MYSQL_PUBLIC_URL="mysql://${{MYSQLUSER}}:${{MYSQL_ROOT_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}/${{MYSQL_DATABASE}}"
+MYSQL_ROOT_PASSWORD="MeRuTMqMpRRWIdWCHWocApSLlyQhURtn"
+MYSQL_URL="mysql://${{MYSQLUSER}}:${{MYSQL_ROOT_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:3306/${{MYSQL_DATABASE}}"
+MYSQLDATABASE="${{MYSQL_DATABASE}}"
+MYSQLHOST="${{RAILWAY_PRIVATE_DOMAIN}}"
+MYSQLPASSWORD="${{MYSQL_ROOT_PASSWORD}}"
+MYSQLPORT="3306"
+MYSQLUSER="root"
 
 # JWT Secret (for authentication tokens)
 JWT_SECRET=pharmacy_store_jwt_secret_key_2025
@@ -42,4 +46,5 @@ INSTRUCTIONS:
 7. Restart your server (Ctrl+C then npm start)
 
 ═══════════════════════════════════════════════════════════════
+
 
