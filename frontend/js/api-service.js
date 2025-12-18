@@ -1,7 +1,9 @@
 // API Service Layer - Connects to Backend Tables
 // This service handles all API calls to backend endpoints
 
-const API_BASE_URL = 'http://localhost:3000/api'; // Update with your backend URL
+// const API_BASE_URL = 'http://localhost:3000/api'; // Update with your backend URL
+const BASE_URL = "https://your-backend.up.railway.app";
+
 
 class ApiService {
     constructor() {
@@ -406,4 +408,5 @@ class ApiService {
 
 // Create singleton instance
 const apiService = new ApiService();
+
 
