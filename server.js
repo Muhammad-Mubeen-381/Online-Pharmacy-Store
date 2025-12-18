@@ -31,6 +31,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', message: 'Pharmacy Store API is running' });
 });
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -76,4 +79,5 @@ async function startServer() {
 }
 
 startServer();
+
 
