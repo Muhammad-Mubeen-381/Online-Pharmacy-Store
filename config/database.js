@@ -3,13 +3,13 @@ require('dotenv').config();
 
 // Create connection pool for better performance
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
+    host: process.env.Host || 'localhost',
+    user: process.env.User || 'root',
     // password: 'HaFiZ08642@',
-    password:process.env.DB_PASSWORD||'',
+    password:process.env.Password||'',
 
-    database: process.env.DB_NAME || 'pharmacy_store',
-    port: process.env.DB_PORT || 3306,
+    database: process.env.Database || 'pharmacy_store',
+    port: process.env.Port || 3306,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -29,4 +29,5 @@ async function testConnection() {
 }
 
 module.exports = { pool, testConnection };
+
 
